@@ -66,9 +66,9 @@ const PredictionPanel: React.FC<PredictionPanelProps> = ({
   }, [manualLat, manualLng, onStartPointChange]);
 
   const renderModelInfo = () => {
-    if (!predictions?.model_info) return null;
+    if (!clusters?.model_info) return null;
 
-    const { model_info } = predictions;
+    const { model_info } = clusters;
     
     return (
       <motion.div
@@ -141,7 +141,7 @@ const PredictionPanel: React.FC<PredictionPanelProps> = ({
         <div className="space-y-3">
           {predictionsToShow.map((prediction, index) => (
             <PredictionCard
-              key={prediction.cluster_id}
+              key={prediction.destination_area}
               prediction={prediction}
               rank={index + 1}
               isTop={index === 0}
@@ -338,7 +338,7 @@ interface PredictionCardProps {
 
 const PredictionCard: React.FC<PredictionCardProps> = ({ prediction, rank, isTop }) => {
   const handleNavigate = () => {
-    const { lat, lng } = prediction.cluster_center;
+    const { lat, lng } = prediction.coordinates;
     const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
     window.open(googleMapsUrl, '_blank');
   };
@@ -368,19 +368,19 @@ const PredictionCard: React.FC<PredictionCardProps> = ({ prediction, rank, isTop
         <div className={`text-lg font-bold ${
           isTop ? 'text-red-600' : 'text-blue-600'
         }`}>
-          {(prediction.probability * 100).toFixed(1)}%
+          {prediction.percentage.toFixed(1)}%
         </div>
       </div>
 
       <div className="space-y-2 mb-3">
         <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Cluster ID:</span>
-          <span className="font-medium">{prediction.cluster_id}</span>
+          <span className="text-gray-600">Area:</span>
+          <span className="font-medium">{prediction.destination_area}</span>
         </div>
         <div className="flex justify-between text-sm">
           <span className="text-gray-600">Location:</span>
           <span className="font-medium text-right">
-            {prediction.cluster_center.lat.toFixed(4)}, {prediction.cluster_center.lng.toFixed(4)}
+            {prediction.coordinates.lat.toFixed(4)}, {prediction.coordinates.lng.toFixed(4)}
           </span>
         </div>
       </div>

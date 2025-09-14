@@ -67,38 +67,165 @@ interface MapViewProps {
   passengerOrders: PassengerOrder[];
 }
 
-// Custom marker icons
-const createCustomIcon = (color: string, size: 'small' | 'medium' | 'large' = 'medium') => {
-  const sizes = {
-    small: [20, 32],
-    medium: [25, 41],
-    large: [32, 52],
+// Modern hint popup with enhanced styling and animations
+const createHintPopup = (message: string, type: 'info' | 'success' | 'warning' = 'info') => {
+  const typeStyles = {
+    info: {
+      bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      border: '#667eea',
+      icon: '💡'
+    },
+    success: {
+      bg: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+      border: '#4facfe',
+      icon: '✨'
+    },
+    warning: {
+      bg: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+      border: '#fa709a',
+      icon: '⚡'
+    }
   };
   
-  const [width, height] = sizes[size];
+  const style = typeStyles[type];
   
-  return L.divIcon({
-    className: 'custom-marker',
-    html: `
+  return `
+    <style>
+      @keyframes popupSlideIn {
+        0% {
+          opacity: 0;
+          transform: translateY(-10px) scale(0.9);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      .hint-popup {
+        animation: popupSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .hint-popup:hover {
+        transform: scale(1.02);
+        transition: transform 0.2s ease;
+      }
+    </style>
+    <div class="hint-popup" style="
+      background: ${style.bg};
+      backdrop-filter: blur(20px);
+      border: 2px solid ${style.border}40;
+      border-radius: 16px;
+      padding: 16px 20px;
+      font-family: 'Press Start 2P', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      color: white;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
+      max-width: 220px;
+      text-align: center;
+      line-height: 1.6;
+      position: relative;
+      overflow: hidden;
+    ">
       <div style="
-        width: ${width}px;
-        height: ${height}px;
-        background-color: ${color};
-        border: 2px solid white;
-        border-radius: 50% 50% 50% 0;
-        transform: rotate(-45deg);
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+        animation: shimmer 2s infinite;
+      "></div>
+      <div style="
         display: flex;
         align-items: center;
         justify-content: center;
+        gap: 8px;
+        margin-bottom: 4px;
       ">
-        <div style="
-          width: 8px;
-          height: 8px;
-          background-color: white;
+        <span style="font-size: 14px;">${style.icon}</span>
+        <span style="font-family: 'poppins', sans-serif; font-size: 10px; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px;">Hint</span>
+      </div>
+      <div style="font-family: 'poppins', sans-serif; font-size: 13px; font-weight: 500;">
+        ${message}
+      </div>
+      <style>
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+      </style>
+    </div>
+  `;
+};
+
+// Enhanced custom marker icons with modern design
+const createCustomIcon = (color: string, size: 'small' | 'medium' | 'large' = 'medium', type: 'default' | 'pulse' | 'glow' = 'default') => {
+  const sizes = {
+    small: [24, 36],
+    medium: [32, 48],
+    large: [40, 60],
+  };
+  
+  const [width, height] = sizes[size];
+  const pulseAnimation = type === 'pulse' ? 'animation: pulse 2s infinite;' : '';
+  const glowEffect = type === 'glow' ? `box-shadow: 0 0 20px ${color}80, 0 4px 12px rgba(0,0,0,0.3);` : 'box-shadow: 0 4px 12px rgba(0,0,0,0.2);';
+  
+  return L.divIcon({
+    className: 'custom-marker-enhanced',
+    html: `
+      <style>
+        @keyframes pulse {
+          0% { transform: rotate(-45deg) scale(1); }
+          50% { transform: rotate(-45deg) scale(1.1); }
+          100% { transform: rotate(-45deg) scale(1); }
+        }
+        .marker-container {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .marker-ring {
+          position: absolute;
+          width: ${width + 8}px;
+          height: ${width + 8}px;
+          border: 2px solid ${color}40;
           border-radius: 50%;
-          transform: rotate(45deg);
-        "></div>
+          animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+        @keyframes ping {
+          75%, 100% {
+            transform: scale(2);
+            opacity: 0;
+          }
+        }
+      </style>
+      <div class="marker-container">
+        ${type === 'pulse' ? `<div class="marker-ring"></div>` : ''}
+        <div style="
+          width: ${width}px;
+          height: ${height}px;
+          background: linear-gradient(135deg, ${color}, ${color}dd);
+          border: 3px solid white;
+          border-radius: 50% 50% 50% 0;
+          transform: rotate(-45deg);
+          ${glowEffect}
+          ${pulseAnimation}
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s ease;
+        ">
+          <div style="
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 50%;
+            transform: rotate(45deg);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+          "></div>
+        </div>
       </div>
     `,
     iconSize: [width, height],
@@ -129,16 +256,16 @@ const HintPopup: React.FC<{
   onClose: () => void;
 }> = ({ hint, coordinates, onClose }) => (
   <motion.div
-    initial={{ opacity: 0, scale: 0.9 }}
+    initial={{ opacity: 0, scale: 0.8 }}
     animate={{ opacity: 1, scale: 1 }}
-    exit={{ opacity: 0, scale: 0.9 }}
-    className="fixed top-4 right-4 bg-white rounded-[16px] shadow-[3px_4px_4px_rgba(0,0,0,0.2)] p-6 max-w-sm z-[1000]"
+    exit={{ opacity: 0, scale: 0.8 }}
+    className="fixed top-4 right-4 bg-[#FFFEE9] rounded-[12px] shadow-2xl border-4 border-white p-4 max-w-[300px] z-[1000]"
   >
     <div className="flex items-center justify-between mb-4">
-      <h3 className="font-bold text-[18px] text-black">Location Hint</h3>
+      <h3 className="font-['Press_Start_2P',_monospace] text-[16px] text-black drop-shadow-lg">Location Hint</h3>
       <button
         onClick={onClose}
-        className="text-[#858898] hover:text-black text-[20px] leading-none"
+        className="text-[#858898] hover:text-black text-[20px] leading-none transform hover:scale-110 transition-all"
       >
         ×
       </button>
@@ -146,13 +273,13 @@ const HintPopup: React.FC<{
     
     <div className="space-y-3 mb-4">
       <div className="flex justify-between">
-        <span className="text-[14px] text-[#858898]">Order Probability:</span>
-        <span className="font-semibold text-black">{(hint.order_probability * 100).toFixed(1)}%</span>
+        <span className="font-poppins text-[14px] text-[#858898]">Order Probability:</span>
+        <span className="font-poppins font-semibold text-black">{(hint.order_probability * 100).toFixed(1)}%</span>
       </div>
       
       <div className="flex justify-between">
-        <span className="text-[14px] text-[#858898]">Confidence:</span>
-        <span className={`font-semibold ${
+        <span className="font-poppins text-[14px] text-[#858898]">Confidence:</span>
+        <span className={`font-poppins font-semibold ${
           hint.confidence_level === 'High' ? 'text-green-600' :
           hint.confidence_level === 'Medium' ? 'text-yellow-600' : 'text-red-600'
         }`}>
@@ -254,11 +381,18 @@ const MapView: React.FC<MapViewProps> = ({
   };
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full bg-[#FFFEE9] rounded-[12px] overflow-hidden border-4 border-white shadow-2xl">
+      {/* Background Shapes */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-10 left-10 w-20 h-20 bg-[#94EA0D]/20 rounded-full blur-lg" />
+        <div className="absolute bottom-20 right-20 w-24 h-24 bg-blue-400/20 rounded-full blur-lg" />
+        <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-purple-400/20 rounded-full blur-md" />
+      </div>
+      
       <MapContainer
         center={[mapCenter.lat, mapCenter.lng]}
         zoom={13}
-        className="w-full h-full"
+        className="w-full h-full relative z-10"
         zoomControl={true}
       >
         <TileLayer
@@ -272,7 +406,7 @@ const MapView: React.FC<MapViewProps> = ({
         {coordinates && (
           <Marker
             position={[coordinates.lat, coordinates.lng]}
-            icon={createCustomIcon('#3b82f6', 'large')}
+            icon={createCustomIcon('#3b82f6', 'large', 'pulse')}
           >
             <Popup>
               <div className="text-center">
@@ -289,7 +423,7 @@ const MapView: React.FC<MapViewProps> = ({
           <>
             <Marker
               position={[selectedPackage.startCoordinates.lat, selectedPackage.startCoordinates.lng]}
-              icon={createCustomIcon('#22c55e', 'medium')}
+              icon={createCustomIcon('#22c55e', 'medium', 'pulse')}
             >
               <Popup>
                 <div>
@@ -304,7 +438,7 @@ const MapView: React.FC<MapViewProps> = ({
             
             <Marker
               position={[selectedPackage.endCoordinates.lat, selectedPackage.endCoordinates.lng]}
-              icon={createCustomIcon('#ef4444', 'medium')}
+              icon={createCustomIcon('#ef4444', 'medium', 'glow')}
             >
               <Popup>
                 <div>
@@ -334,7 +468,7 @@ const MapView: React.FC<MapViewProps> = ({
           <Marker
             key={`prediction-${index}`}
             position={[prediction.coordinates.lat, prediction.coordinates.lng]}
-            icon={createCustomIcon('#8b5cf6', 'medium')}
+            icon={createCustomIcon('#8b5cf6', 'medium', 'pulse')}
           >
             <Popup>
               <div>
@@ -353,7 +487,7 @@ const MapView: React.FC<MapViewProps> = ({
           <React.Fragment key={order.id}>
             <Marker
               position={[order.pickupPoint.lat, order.pickupPoint.lng]}
-              icon={createCustomIcon('#22c55e', 'small')}
+              icon={createCustomIcon('#22c55e', 'small', 'pulse')}
             >
               <Popup>
                 <div>
@@ -368,7 +502,7 @@ const MapView: React.FC<MapViewProps> = ({
             
             <Marker
               position={[order.destinationPoint.lat, order.destinationPoint.lng]}
-              icon={createCustomIcon('#ef4444', 'small')}
+              icon={createCustomIcon('#ef4444', 'small', 'glow')}
             >
               <Popup>
                 <div>

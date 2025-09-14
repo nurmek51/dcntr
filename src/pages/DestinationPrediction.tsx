@@ -89,11 +89,11 @@ const DestinationPrediction: React.FC<DestinationPredictionProps> = () => {
 
       predictionsToShow.forEach((prediction) => {
         markers.push({
-          id: `prediction-${prediction.cluster_id}`,
-          position: prediction.cluster_center,
+          id: `prediction-${prediction.destination_area}`,
+          position: prediction.coordinates,
           type: 'prediction',
           data: prediction,
-          probability: prediction.probability,
+          probability: prediction.percentage / 100,
         });
       });
     }
@@ -103,13 +103,13 @@ const DestinationPrediction: React.FC<DestinationPredictionProps> = () => {
       clusters.clusters.forEach((cluster) => {
         // Don't add cluster marker if there's already a prediction marker for this cluster
         const hasPrediction = predictions?.predictions.some(
-          p => p.cluster_id === cluster.cluster_id
+          p => p.destination_area === `cluster-${cluster.cluster_id}`
         );
         
         if (!hasPrediction) {
           markers.push({
             id: `cluster-${cluster.cluster_id}`,
-            position: cluster.center,
+            position: cluster.start_center,
             type: 'cluster',
             data: cluster,
           });
@@ -134,8 +134,8 @@ const DestinationPrediction: React.FC<DestinationPredictionProps> = () => {
           const startCluster = sortedClusters[i];
           const endCluster = sortedClusters[j];
           const distance = calculateDistance(
-            startCluster.destination_center,
-            endCluster.destination_center
+            startCluster.start_center,
+            endCluster.start_center
           );
 
           // Only create packages for reasonable distances (5-50km)

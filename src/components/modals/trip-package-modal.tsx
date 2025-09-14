@@ -86,39 +86,39 @@ const TripPackageModal: React.FC<TripPackageModalProps> = ({
         y: -5,
         transition: { duration: 0.2 }
       }}
-      className="bg-white rounded-[16px] shadow-[3px_4px_4px_rgba(0,0,0,0.15)] p-6 border border-gray-100"
+      className="bg-white rounded-[16px] shadow-2xl p-6 border-4 border-gray-200"
     >
       {/* Route Name */}
-      <h3 className="font-bold text-[20px] text-black mb-4 text-center">
+      <h3 className="font-poppins font-bold text-[20px] text-black mb-4 text-center">
         {pkg.routeName}
       </h3>
 
       {/* Trip Details Grid */}
       <div className="space-y-3 mb-6">
         <div className="flex justify-between items-center">
-          <span className="font-medium text-[#858898] text-[14px]">Distance:</span>
-          <span className="font-semibold text-black text-[16px]">{pkg.distance.toFixed(1)} km</span>
+          <span className="font-poppins font-medium text-[#858898] text-[14px]">Distance:</span>
+          <span className="font-poppins font-semibold text-black text-[16px]">{pkg.distance.toFixed(1)} km</span>
         </div>
         
         <div className="flex justify-between items-center">
-          <span className="font-medium text-[#858898] text-[14px]">Est. Time:</span>
-          <span className="font-semibold text-black text-[16px]">{pkg.estimatedTime}</span>
+          <span className="font-poppins font-medium text-[#858898] text-[14px]">Est. Time:</span>
+          <span className="font-poppins font-semibold text-black text-[16px]">{pkg.estimatedTime}</span>
         </div>
         
         <div className="flex justify-between items-center">
-          <span className="font-medium text-[#858898] text-[14px]">Fuel Consumption:</span>
-          <span className="font-semibold text-black text-[16px]">{pkg.fuelConsumption.toFixed(2)} L</span>
+          <span className="font-poppins font-medium text-[#858898] text-[14px]">Fuel Consumption:</span>
+          <span className="font-poppins font-semibold text-black text-[16px]">{pkg.fuelConsumption.toFixed(2)} L</span>
         </div>
         
         <div className="flex justify-between items-center">
-          <span className="font-medium text-[#858898] text-[14px]">Fuel Cost:</span>
-          <span className="font-semibold text-black text-[16px]">{pkg.fuelCost.toFixed(0)} ₸</span>
+          <span className="font-poppins font-medium text-[#858898] text-[14px]">Fuel Cost:</span>
+          <span className="font-poppins font-semibold text-black text-[16px]">{pkg.fuelCost.toFixed(0)} ₸</span>
         </div>
         
         <div className="border-t border-gray-200 pt-3">
           <div className="flex justify-between items-center">
-            <span className="font-semibold text-[#858898] text-[14px]">Passenger Price:</span>
-            <span className="font-bold text-green-600 text-[18px]">{pkg.passengerPrice} ₸</span>
+            <span className="font-poppins font-semibold text-[#858898] text-[14px]">Passenger Price:</span>
+            <span className="font-poppins font-bold text-green-600 text-[18px]">{pkg.passengerPrice} ₸</span>
           </div>
         </div>
       </div>
@@ -127,9 +127,11 @@ const TripPackageModal: React.FC<TripPackageModalProps> = ({
       <Button
         onClick={() => onPackageSelect(pkg)}
         variant="primary"
-        className="w-full"
+        className="w-full transform hover:scale-105 transition-all shadow-2xl border-2 border-white"
       >
-        Select Package
+        <span className="font-['Press_Start_2P',_monospace] text-[14px]">
+          Select Package
+        </span>
       </Button>
     </motion.div>
   );
@@ -154,7 +156,20 @@ const TripPackageModal: React.FC<TripPackageModalProps> = ({
             transition={{ type: "spring", duration: 0.6, bounce: 0.3 }}
             className="fixed inset-0 flex items-center justify-center z-50 p-4"
           >
-            <div className="bg-[#FFFEE9] rounded-[20px] shadow-[3px_4px_4px_rgba(0,0,0,0.4)] w-full max-w-[900px] max-h-[90vh] overflow-y-auto p-8 mx-4">
+            <div className="relative bg-gradient-to-br from-[#FFFEE9] via-white to-[#F0F9FF] rounded-[24px] shadow-2xl border-4 border-white/50 backdrop-blur-sm w-full max-w-[920px] max-h-[90vh] overflow-y-auto p-8 mx-4 overflow-hidden">
+              {/* Animated background elements */}
+              <motion.div
+                animate={{ rotate: 360, scale: [1, 1.1, 1] }}
+                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+                className="absolute -top-20 -right-20 w-48 h-48 bg-gradient-to-r from-purple-200/20 to-pink-200/20 rounded-full blur-2xl"
+              />
+              <motion.div
+                animate={{ rotate: -360, scale: [1.1, 1, 1.1] }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className="absolute -bottom-20 -left-20 w-56 h-56 bg-gradient-to-r from-blue-200/20 to-green-200/20 rounded-full blur-2xl"
+              />
+              
+              <div className="relative z-10">
               {/* Header */}
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
@@ -162,14 +177,14 @@ const TripPackageModal: React.FC<TripPackageModalProps> = ({
                 transition={{ delay: 0.2 }}
                 className="text-center mb-8"
               >
-                <h2 className="font-bold text-[32px] text-black mb-2">
+                <h2 className="font-['Press_Start_2P',_monospace] text-[32px] text-black mb-2">
                   Choose Your Trip Package
                 </h2>
-                <p className="font-medium text-[#858898] text-[16px] mb-4">
+                <p className="font-poppins font-medium text-[#858898] text-[16px] mb-4">
                   Based on your {engineVolume.toFixed(1)}L engine and {fuelType.replace('_', '-')} fuel
                 </p>
-                <div className="inline-block bg-white px-4 py-2 rounded-[8px] shadow-sm">
-                  <span className="text-[14px] text-[#858898]">
+                <div className="inline-block bg-white px-4 py-2 rounded-[8px] shadow-lg border-2 border-gray-200">
+                  <span className="font-poppins text-[14px] text-[#858898]">
                     Consumption: <strong className="text-black">{fuelConsumptionPer100km}L/100km</strong> • 
                     Fuel Price: <strong className="text-black">{fuelPrice}₸/L</strong>
                   </span>
@@ -194,11 +209,14 @@ const TripPackageModal: React.FC<TripPackageModalProps> = ({
                   onClick={onSkip}
                   variant="secondary"
                   size="lg"
-                  className="px-12"
+                  className="px-12 transform hover:scale-105 transition-all shadow-2xl border-2 border-white"
                 >
-                  Skip
+                  <span className="font-['Press_Start_2P',_monospace] text-[14px]">
+                    Skip
+                  </span>
                 </Button>
               </motion.div>
+              </div>
             </div>
           </motion.div>
         </>
