@@ -23,3 +23,19 @@ body {
 .font-poppins {
   font-family: 'Poppins', sans-serif;
 }
+
+/* Scroll Snap Styles */
+.snap-container {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar for cleaner look */
+.snap-container::-webkit-scrollbar {
+  display: none;
+}
+
+.snap-container {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

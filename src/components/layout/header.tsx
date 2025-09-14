@@ -19,7 +19,7 @@ export function Header() {
         {/* Center - Nomadia */}
         <div className="flex items-center justify-center flex-1">
           <h1 className="font-poppins font-semibold text-[30px] leading-[1.2] tracking-[-0.01em] text-black text-center md:text-[26px] sm:text-[22px]">
-            Nomadia
+            Sulpak Team
           </h1>
         </div>
 

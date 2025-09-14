@@ -4,7 +4,7 @@ import rectangle from '../../assets/rectangle.png';
 
 const HeroNew: React.FC = () => {
   return (
-    <div className="relative h-[704px] w-full overflow-hidden flex items-center justify-center">
+    <div className="relative h-full w-full overflow-hidden flex items-center justify-center">
       {/* Hero Image Container */}
       <div className="relative flex items-center justify-center w-full max-w-[1244px] h-full">
         {/* Main Hero GIF */}
@@ -15,7 +15,7 @@ const HeroNew: React.FC = () => {
         />
 
         {/* Overlay for text (bottom-left corner) */}
-        <div className="absolute bottom-8 left-8 z-10 flex flex-col">
+        <div className="absolute bottom-25 left-8 z-10 flex flex-col">
           <div className="relative font-['Inter:Semi_Bold',_sans-serif] font-semibold leading-[1.2] text-[60px] tracking-[-0.6px] max-w-[524px] text-black">
             <p className="mb-0 text-white">Save time</p>
 

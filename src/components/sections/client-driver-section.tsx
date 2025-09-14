@@ -8,9 +8,9 @@ import taxiVgVector from '../../assets/taxi-vg-vector.svg';
 
 export function ClientDriverSection() {
   return (
-    <section className="relative w-full min-h-screen bg-[#FFFEE9] pt-16">
+    <section className="relative w-full h-full bg-[#FFFEE9] pt-16">
       {/* Desktop Layout */}
-      <div className="hidden md:flex relative w-full h-screen">
+      <div className="hidden md:flex relative w-full h-full">
         {/* Central Green Lightning/Zigzag Divider */}
         <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
           <img src={bgVector} alt="divider" className="h-full object-cover" />
