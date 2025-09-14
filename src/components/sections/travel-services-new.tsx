@@ -5,7 +5,7 @@ import scooter from "../../assets/scooter.png";
 import moped from "../../assets/moped.png";
 import shape1 from "../../assets/shape1.svg";
 import shape2 from "../../assets/shape2.svg";
-import vector from "../../assets/Vector 3.svg"
+import vector from "../../assets/Vector 3.svg";
 
 interface ServiceCardProps {
   title: string;
@@ -32,10 +32,10 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 }) => {
   return (
     <motion.div
-      tabIndex={0} // allows keyboard focus
+      tabIndex={0}
       onFocus={onFocus}
       onBlur={onBlur}
-      className="bg-transparent rounded-[20px] shadow-[3px_4px_4px_rgba(0,0,0,0.4)] w-[420px] h-[500px] flex-shrink-0 flex flex-col p-10 outline-none"
+      className="bg-transparent rounded-[20px] border-2 border-gray-300 w-[420px] h-[420px] flex-shrink-0 flex flex-col p-20 outline-none"
       initial={{ opacity: 0, y: 50, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{
@@ -50,7 +50,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       }}
       whileTap={{ scale: 0.97 }}
     >
-      <div className={`flex flex-col ${gap} justify-between h-full`}>
+      <div className={`flex flex-col ${gap} justify-between flex-1`}>
         {/* Title + Description */}
         <div className="flex flex-col gap-3">
           <h3 className="font-bold text-[24px] text-black">{title}</h3>
@@ -71,25 +71,14 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   );
 };
 
-
-
 const TravelServicesNew: React.FC = () => {
   const [isPaused, setIsPaused] = useState(false);
 
   const pause = () => setIsPaused(true);
   const resume = () => setIsPaused(false);
 
-  /*
-    Important:
-    - .marquee-track contains the duplicated content (you already duplicated it in JSX).
-    - The keyframe moves the entire track from 0 to -50% of its own width.
-    - Because the content is duplicated, -50% equals one full set width, giving a seamless loop.
-    - animation-play-state preserves the current transform when paused.
-  */
-
   return (
     <div className="relative bg-[#fffee9] w-full h-full overflow-hidden flex items-center justify-center">
-      {/* Inject small CSS for the marquee (could be moved to a global CSS file) */}
       <style>{`
         .marquee-track {
           display: flex;
@@ -121,21 +110,19 @@ const TravelServicesNew: React.FC = () => {
       <motion.img
         src={vector}
         alt=""
-        className="absolute  w-[800px] h-[680px]"
+        className="absolute w-[800px] h-[680px]"
         animate={{ opacity: 0.8, x: 0 }}
         transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
       />
-      
-      {/* Right bottom corner shape2 */}
+
       <motion.img
         src={shape2}
         alt=""
-        className="absolute right-[-100px] bottom-[-100px]  w-[250px] h-[420px]"
+        className="absolute right-[-100px] bottom-[-100px] w-[250px] h-[420px]"
         initial={{ opacity: 0, x: 100, rotate: 0 }}
         animate={{ opacity: 0.6, x: 0, rotate: -15 }}
         transition={{ duration: 1, delay: 0.8, ease: "easeOut" }}
       />
-      
 
       {/* Content */}
       <div className="flex flex-col items-center gap-30 w-full h-full">
@@ -148,19 +135,17 @@ const TravelServicesNew: React.FC = () => {
           Main Functions
         </motion.h2>
 
-        {/* Marquee container */}
-        <div className="w-full  relative">
+        {/* Marquee */}
+        <div className="w-full relative">
           <div
-            // apply pause class depending on state
             className={`marquee-track ${isPaused ? "paused" : ""}`}
-            onMouseEnter={pause} // pause on any hover inside the track (cards included)
+            onMouseEnter={pause}
             onMouseLeave={resume}
-            // note: you can also put handlers on individual cards if you prefer
           >
             {/* First set */}
             <ServiceCard
-              title="Salamaleikum"
-              description="Our service ensures a comfortable ride with modern vehicles, climate control, spacious seating, and professional drivers, making your journey pleasant and stress-free."
+              title="Heat Map"
+              description="Visualize real-time demand patterns and hotspots across the city. Our intelligent heat mapping technology helps optimize route planning and identifies high-traffic areas for better service efficiency."
               image={smartCar}
               gap="gap-[98px]"
               imageWidth="214px"
@@ -170,8 +155,8 @@ const TravelServicesNew: React.FC = () => {
               onBlur={resume}
             />
             <ServiceCard
-              title="Ualeikumassalam"
-              description="Our scooter rental service provides top-quality, well-maintained scooters with ergonomic designs, ensuring a smooth, comfortable, and hassle-free riding experience at affordable rates."
+              title="Hint Map"
+              description="Get intelligent route suggestions and traffic insights powered by machine learning. Our hint system provides real-time recommendations to help you navigate efficiently and avoid congested areas."
               image={scooter}
               gap="gap-10"
               imageWidth="157px"
@@ -181,8 +166,8 @@ const TravelServicesNew: React.FC = () => {
               onBlur={resume}
             />
             <ServiceCard
-              title="Motorbike"
-              description="Our motorbike rental service offers high-quality, well-maintained bikes with powerful engines, ensuring a thrilling, comfortable, and reliable riding experience at competitive rates."
+              title="Destination Prediction"
+              description="Advanced AI algorithms predict your likely destinations based on travel patterns and preferences. Experience seamless journey planning with intelligent forecasting that saves time and optimizes your routes."
               image={moped}
               gap="gap-[70px]"
               imageWidth="185px"
@@ -192,72 +177,37 @@ const TravelServicesNew: React.FC = () => {
               onBlur={resume}
             />
 
-            {/* Second set for seamless loop */}
+            {/* Second set */}
             <ServiceCard
-              title="Salamaleikum"
-              description="Our service ensures a comfortable ride with modern vehicles, climate control, spacious seating, and professional drivers, making your journey pleasant and stress-free."
+              title="Heat Map"
+              description="Visualize real-time demand patterns and hotspots across the city. Our intelligent heat mapping technology helps optimize route planning and identifies high-traffic areas for better service efficiency."
               image={smartCar}
               gap="gap-[98px]"
               imageWidth="214px"
               imageHeight="121px"
-              index={3}
+              index={0}
               onFocus={pause}
               onBlur={resume}
             />
             <ServiceCard
-              title="Ualeikumassalam"
-              description="Our scooter rental service provides top-quality, well-maintained scooters with ergonomic designs, ensuring a smooth, comfortable, and hassle-free riding experience at affordable rates."
+              title="Hint Map"
+              description="Get intelligent route suggestions and traffic insights powered by machine learning. Our hint system provides real-time recommendations to help you navigate efficiently and avoid congested areas."
               image={scooter}
               gap="gap-10"
               imageWidth="157px"
               imageHeight="150px"
-              index={4}
+              index={1}
               onFocus={pause}
               onBlur={resume}
             />
             <ServiceCard
-              title="Motorbike"
-              description="Our motorbike rental service offers high-quality, well-maintained bikes with powerful engines, ensuring a thrilling, comfortable, and reliable riding experience at competitive rates."
+              title="Destination Prediction"
+              description="Advanced AI algorithms predict your likely destinations based on travel patterns and preferences. Experience seamless journey planning with intelligent forecasting that saves time and optimizes your routes."
               image={moped}
               gap="gap-[70px]"
               imageWidth="185px"
               imageHeight="156px"
-              index={5}
-              onFocus={pause}
-              onBlur={resume}
-            />
-
-            {/* Third set for seamless loop */}
-            <ServiceCard
-              title="Salamaleikum"
-              description="Our service ensures a comfortable ride with modern vehicles, climate control, spacious seating, and professional drivers, making your journey pleasant and stress-free."
-              image={smartCar}
-              gap="gap-[98px]"
-              imageWidth="214px"
-              imageHeight="121px"
-              index={6}
-              onFocus={pause}
-              onBlur={resume}
-            />
-            <ServiceCard
-              title="Ualeikumassalam"
-              description="Our scooter rental service provides top-quality, well-maintained scooters with ergonomic designs, ensuring a smooth, comfortable, and hassle-free riding experience at affordable rates."
-              image={scooter}
-              gap="gap-10"
-              imageWidth="157px"
-              imageHeight="150px"
-              index={7}
-              onFocus={pause}
-              onBlur={resume}
-            />
-            <ServiceCard
-              title="Motorbike"
-              description="Our motorbike rental service offers high-quality, well-maintained bikes with powerful engines, ensuring a thrilling, comfortable, and reliable riding experience at competitive rates."
-              image={moped}
-              gap="gap-[70px]"
-              imageWidth="185px"
-              imageHeight="156px"
-              index={8}
+              index={2}
               onFocus={pause}
               onBlur={resume}
             />

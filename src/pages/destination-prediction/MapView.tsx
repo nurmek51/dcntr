@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMapEvents } from 'react-leaflet';
-import L from 'leaflet';
+import L, { type LeafletMouseEvent } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { Coordinates, MapMarker, Prediction, HeatmapResponse, TripPackage } from '../../types/prediction';
 import { KazakhstanAddressService } from '../../services/addressService';
@@ -64,7 +64,7 @@ interface MapClickHandlerProps {
 
 const MapClickHandler: React.FC<MapClickHandlerProps> = ({ onMapClick }) => {
   useMapEvents({
-    click: (e) => {
+    click: (e: LeafletMouseEvent) => {
       onMapClick({
         lat: e.latlng.lat,
         lng: e.latlng.lng,

@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import clientPerson from '../../assets/client-person.png';
 import taxiCar from '../../assets/taxi-car-6da396.png';
 import indriveLogo from '../../assets/indrive-logo-small.png';
@@ -7,6 +8,12 @@ import clientBgVector from '../../assets/client-bg-vector.svg';
 import taxiVgVector from '../../assets/taxi-vg-vector.svg';
 
 export function ClientDriverSection() {
+  const navigate = useNavigate();
+
+  const handleTryItNow = () => {
+    navigate('/destination-prediction');
+  };
+
   return (
     <section className="relative w-full h-full bg-[#FFFEE9] pt-16">
       {/* Desktop Layout */}
@@ -14,6 +21,16 @@ export function ClientDriverSection() {
         {/* Central Green Lightning/Zigzag Divider */}
         <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
           <img src={bgVector} alt="divider" className="h-full object-cover" />
+        </div>
+        
+        {/* Central Try It Now Button */}
+        <div className="absolute inset-0 z-30 flex items-center justify-center">
+          <button
+            onClick={handleTryItNow}
+            className="bg-[#94EA0D] hover:bg-[#7BC108] transition-all duration-300 px-12 py-6 rounded-[20px] shadow-2xl border-4 border-white hover:border-[#94EA0D] transform hover:scale-105 active:scale-95"
+          >
+            <span className="font-poppins font-bold text-[28px] text-black tracking-wide">TRY IT NOW</span>
+          </button>
         </div>
         
         {/* Left Side - Client */}
@@ -125,6 +142,16 @@ export function ClientDriverSection() {
       
       {/* Mobile Layout - Stacked Vertically with Smooth Scrolling */}
       <div className="md:hidden">
+        
+        {/* Mobile Try It Now Button - Fixed Position */}
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+          <button
+            onClick={handleTryItNow}
+            className="bg-[#94EA0D] hover:bg-[#7BC108] transition-all duration-300 px-8 py-4 rounded-[16px] shadow-2xl border-3 border-white hover:border-[#94EA0D] transform hover:scale-105 active:scale-95"
+          >
+            <span className="font-poppins font-bold text-[20px] text-black tracking-wide">TRY IT NOW</span>
+          </button>
+        </div>
         
         {/* Client Section */}
         <div className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden">

@@ -110,7 +110,7 @@ const TeamSection: React.FC = () => {
           {teamMembers.map((member, index) => (
             <motion.div
               key={member.id}
-              className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 group hover:-translate-y-2 min-h-[420px] w-full max-w-[320px] mx-auto"
+              className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 p-10 group hover:-translate-y-2 min-h-[420px] w-full max-w-[320px] mx-auto"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 + 0.8 }}
