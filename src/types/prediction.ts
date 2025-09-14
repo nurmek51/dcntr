@@ -9,9 +9,10 @@ export interface ClusterCenter {
 }
 
 export interface Prediction {
-  cluster_id: number;
-  probability: number;
-  cluster_center: ClusterCenter;
+  destination_area: string;
+  trip_count: number;
+  percentage: number;
+  coordinates: Coordinates;
 }
 
 export interface ModelInfo {
@@ -28,14 +29,16 @@ export interface RequestSummary {
 
 export interface PredictionResponse {
   predictions: Prediction[];
-  model_info: ModelInfo;
-  request_summary: RequestSummary;
+  total_nearby_clients: number;
+  search_radius_km: number;
+  query_location: Coordinates;
 }
 
 export interface Cluster {
   cluster_id: number;
-  center: Coordinates;
-  description: string;
+  start_center: Coordinates;
+  trip_count: number;
+  avg_distance: number;
 }
 
 export interface ClustersResponse {
@@ -64,7 +67,7 @@ export interface MapMarker {
 
 export interface HeatmapCluster {
   cluster_id: number;
-  destination_center: Coordinates;
+  start_center: Coordinates;
   trip_count: number;
   avg_distance: number;
 }

@@ -83,6 +83,9 @@ const MarkerWithAddress: React.FC<MarkerWithAddressProps> = ({ marker, icon }) =
   const [address, setAddress] = useState<string>('Loading address...');
   const [isLoadingAddress, setIsLoadingAddress] = useState(false);
 
+  // Guard against undefined position
+  if (!marker.position) return null;
+
   const loadAddress = async () => {
     if (isLoadingAddress) return;
     
@@ -137,10 +140,10 @@ const MarkerWithAddress: React.FC<MarkerWithAddressProps> = ({ marker, icon }) =
             </h3>
             <div className="space-y-2 mb-3">
               <p className="text-sm">
-                <span className="font-medium">Cluster:</span> {prediction.cluster_id}
+                <span className="font-medium">Cluster:</span> {prediction.destination_area}
               </p>
               <p className="text-sm">
-                <span className="font-medium">Probability:</span> {(prediction.probability * 100).toFixed(1)}%
+                <span className="font-medium">Probability:</span> {(prediction.percentage * 100).toFixed(1)}%
               </p>
               <p className="text-sm text-gray-600">{address}</p>
             </div>
@@ -271,7 +274,7 @@ const MapView: React.FC<MapViewProps> = ({
     // In a real app, you might use a routing service
     return [
       [startPoint.lat, startPoint.lng],
-      [topPrediction.cluster_center.lat, topPrediction.cluster_center.lng],
+      [topPrediction.coordinates.lat, topPrediction.coordinates.lng],
     ] as [number, number][];
   }, [showRoutePreview, startPoint, topPrediction]);
 
@@ -316,7 +319,7 @@ const MapView: React.FC<MapViewProps> = ({
             return heatmap.clusters.map((cluster) => (
               <Circle
                 key={`heatmap-${cluster.cluster_id}`}
-                center={[cluster.destination_center.lat, cluster.destination_center.lng]}
+                center={[cluster.start_center.lat, cluster.start_center.lng]}
                 radius={getHeatmapRadius(cluster.trip_count, maxTripCount)}
                 pathOptions={{
                   color: getHeatmapColor(cluster.trip_count, maxTripCount),
@@ -331,7 +334,7 @@ const MapView: React.FC<MapViewProps> = ({
                     <div className="space-y-1 text-sm">
                       <p><span className="font-medium">Trip Count:</span> {cluster.trip_count.toLocaleString()}</p>
                       <p><span className="font-medium">Avg Distance:</span> {cluster.avg_distance.toFixed(4)} km</p>
-                      <p><span className="font-medium">Coordinates:</span> {cluster.destination_center.lat.toFixed(6)}, {cluster.destination_center.lng.toFixed(6)}</p>
+                      <p><span className="font-medium">Coordinates:</span> {cluster.start_center.lat.toFixed(6)}, {cluster.start_center.lng.toFixed(6)}</p>
                     </div>
                   </div>
                 </Popup>
@@ -356,8 +359,8 @@ const MapView: React.FC<MapViewProps> = ({
             <Polyline
               key={`package-${pkg.id}`}
               positions={[
-                [pkg.startCluster.destination_center.lat, pkg.startCluster.destination_center.lng],
-                [pkg.endCluster.destination_center.lat, pkg.endCluster.destination_center.lng]
+                [pkg.startCluster.start_center.lat, pkg.startCluster.start_center.lng],
+                [pkg.endCluster.start_center.lat, pkg.endCluster.start_center.lng]
               ]}
               color={isSelected ? "#dc2626" : "#6b7280"}
               weight={isSelected ? 4 : 2}
@@ -371,7 +374,7 @@ const MapView: React.FC<MapViewProps> = ({
         {selectedPackage && (
           <>
             <Marker
-              position={[selectedPackage.startCluster.destination_center.lat, selectedPackage.startCluster.destination_center.lng]}
+              position={[selectedPackage.startCluster.start_center.lat, selectedPackage.startCluster.start_center.lng]}
               icon={createCustomIcon('#22c55e', 'medium')}
             >
               <Popup>
@@ -384,7 +387,7 @@ const MapView: React.FC<MapViewProps> = ({
               </Popup>
             </Marker>
             <Marker
-              position={[selectedPackage.endCluster.destination_center.lat, selectedPackage.endCluster.destination_center.lng]}
+              position={[selectedPackage.endCluster.start_center.lat, selectedPackage.endCluster.start_center.lng]}
               icon={createCustomIcon('#ef4444', 'medium')}
             >
               <Popup>
