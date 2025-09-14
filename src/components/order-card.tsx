@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { KazakhstanAddressService } from '../services/addressService';
-import Button from './ui/button';
 
 interface Coordinates {
   lat: number;

@@ -83,15 +83,12 @@ const MarkerWithAddress: React.FC<MarkerWithAddressProps> = ({ marker, icon }) =
   const [address, setAddress] = useState<string>('Loading address...');
   const [isLoadingAddress, setIsLoadingAddress] = useState(false);
 
-<<<<<<< HEAD
   // Guard against undefined position
   if (!marker.position) {
     console.warn('Marker has undefined position:', marker);
     return null;
   }
 
-=======
->>>>>>> 0e7f96c38c25ffb75719dd05381bdf17aa709e37
   const loadAddress = async () => {
     if (isLoadingAddress) return;
     
@@ -146,17 +143,10 @@ const MarkerWithAddress: React.FC<MarkerWithAddressProps> = ({ marker, icon }) =
             </h3>
             <div className="space-y-2 mb-3">
               <p className="text-sm">
-<<<<<<< HEAD
                 <span className="font-medium">Cluster:</span> {prediction.cluster_id}
               </p>
               <p className="text-sm">
                 <span className="font-medium">Probability:</span> {(prediction.probability * 100).toFixed(1)}%
-=======
-                <span className="font-medium">Area:</span> {prediction.destination_area}
-              </p>
-              <p className="text-sm">
-                <span className="font-medium">Probability:</span> {prediction.percentage.toFixed(1)}%
->>>>>>> 0e7f96c38c25ffb75719dd05381bdf17aa709e37
               </p>
               <p className="text-sm text-gray-600">{address}</p>
             </div>
