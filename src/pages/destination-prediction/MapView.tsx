@@ -84,7 +84,10 @@ const MarkerWithAddress: React.FC<MarkerWithAddressProps> = ({ marker, icon }) =
   const [isLoadingAddress, setIsLoadingAddress] = useState(false);
 
   // Guard against undefined position
-  if (!marker.position) return null;
+  if (!marker.position) {
+    console.warn('Marker has undefined position:', marker);
+    return null;
+  }
 
   const loadAddress = async () => {
     if (isLoadingAddress) return;
@@ -140,10 +143,10 @@ const MarkerWithAddress: React.FC<MarkerWithAddressProps> = ({ marker, icon }) =
             </h3>
             <div className="space-y-2 mb-3">
               <p className="text-sm">
-                <span className="font-medium">Cluster:</span> {prediction.destination_area}
+                <span className="font-medium">Cluster:</span> {prediction.cluster_id}
               </p>
               <p className="text-sm">
-                <span className="font-medium">Probability:</span> {(prediction.percentage * 100).toFixed(1)}%
+                <span className="font-medium">Probability:</span> {(prediction.probability * 100).toFixed(1)}%
               </p>
               <p className="text-sm text-gray-600">{address}</p>
             </div>
@@ -233,18 +236,25 @@ const MapView: React.FC<MapViewProps> = ({
   // Fit map to show all markers when they change
   useEffect(() => {
     if (mapRef.current && markers.length > 0) {
-      const bounds = L.latLngBounds(
-        markers.map(marker => [marker.position.lat, marker.position.lng])
-      );
-      
-      // Add some padding to the bounds
-      const paddedBounds = bounds.pad(0.1);
-      
-      // Fit the map to show all markers
-      mapRef.current.fitBounds(paddedBounds, {
-        maxZoom: 15,
-        animate: true,
-      });
+      const validMarkers = markers.filter(marker => marker.position);
+      const invalidCount = markers.length - validMarkers.length;
+      if (invalidCount > 0) {
+        console.warn(`Found ${invalidCount} markers with undefined positions, skipping them for bounds calculation`);
+      }
+      if (validMarkers.length > 0) {
+        const bounds = L.latLngBounds(
+          validMarkers.map(marker => [marker.position!.lat, marker.position!.lng])
+        );
+        
+        // Add some padding to the bounds
+        const paddedBounds = bounds.pad(0.1);
+        
+        // Fit the map to show all markers
+        mapRef.current.fitBounds(paddedBounds, {
+          maxZoom: 15,
+          animate: true,
+        });
+      }
     }
   }, [markers]);
 
@@ -274,7 +284,7 @@ const MapView: React.FC<MapViewProps> = ({
     // In a real app, you might use a routing service
     return [
       [startPoint.lat, startPoint.lng],
-      [topPrediction.coordinates.lat, topPrediction.coordinates.lng],
+      [topPrediction.cluster_center.lat, topPrediction.cluster_center.lng],
     ] as [number, number][];
   }, [showRoutePreview, startPoint, topPrediction]);
 

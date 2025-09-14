@@ -9,10 +9,9 @@ export interface ClusterCenter {
 }
 
 export interface Prediction {
-  destination_area: string;
-  trip_count: number;
-  percentage: number;
-  coordinates: Coordinates;
+  cluster_id: number;
+  probability: number;
+  cluster_center: Coordinates;
 }
 
 export interface ModelInfo {
@@ -29,9 +28,8 @@ export interface RequestSummary {
 
 export interface PredictionResponse {
   predictions: Prediction[];
-  total_nearby_clients: number;
-  search_radius_km: number;
-  query_location: Coordinates;
+  model_info: ModelInfo;
+  request_summary: RequestSummary;
 }
 
 export interface Cluster {

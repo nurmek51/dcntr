@@ -34,15 +34,15 @@ const TripPackageCard: React.FC<TripPackageCardProps> = ({
       setIsLoadingAddresses(true);
       try {
         const [startAddr, endAddr] = await Promise.all([
-          KazakhstanAddressService.reverseGeocode(pkg.startCluster.destination_center),
-          KazakhstanAddressService.reverseGeocode(pkg.endCluster.destination_center)
+          KazakhstanAddressService.reverseGeocode(pkg.startCluster.start_center),
+          KazakhstanAddressService.reverseGeocode(pkg.endCluster.start_center)
         ]);
         setStartAddress(startAddr);
         setEndAddress(endAddr);
       } catch (error) {
         console.warn('Failed to load addresses:', error);
-        setStartAddress(`${pkg.startCluster.destination_center.lat.toFixed(4)}, ${pkg.startCluster.destination_center.lng.toFixed(4)}`);
-        setEndAddress(`${pkg.endCluster.destination_center.lat.toFixed(4)}, ${pkg.endCluster.destination_center.lng.toFixed(4)}`);
+        setStartAddress(`${pkg.startCluster.start_center.lat.toFixed(4)}, ${pkg.startCluster.start_center.lng.toFixed(4)}`);
+        setEndAddress(`${pkg.endCluster.start_center.lat.toFixed(4)}, ${pkg.endCluster.start_center.lng.toFixed(4)}`);
       } finally {
         setIsLoadingAddresses(false);
       }

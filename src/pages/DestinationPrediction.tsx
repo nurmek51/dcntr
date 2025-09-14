@@ -109,7 +109,7 @@ const DestinationPrediction: React.FC<DestinationPredictionProps> = () => {
         if (!hasPrediction) {
           markers.push({
             id: `cluster-${cluster.cluster_id}`,
-            position: cluster.center,
+            position: cluster.start_center,
             type: 'cluster',
             data: cluster,
           });
@@ -134,8 +134,8 @@ const DestinationPrediction: React.FC<DestinationPredictionProps> = () => {
           const startCluster = sortedClusters[i];
           const endCluster = sortedClusters[j];
           const distance = calculateDistance(
-            startCluster.destination_center,
-            endCluster.destination_center
+            startCluster.start_center,
+            endCluster.start_center
           );
 
           // Only create packages for reasonable distances (5-50km)

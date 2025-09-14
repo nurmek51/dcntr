@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FUEL_PRICES } from '../../utils/cost';
 import Button from '../ui/button';
+import { PACKAGE_ROUTES, calculateRouteDistance } from '../../utils/coordinates';
 
 interface TripPackage {
   id: string;
@@ -11,8 +12,7 @@ interface TripPackage {
   fuelConsumption: number;
   fuelCost: number;
   passengerPrice: number;
-  startCoordinates: { lat: number; lng: number };
-  endCoordinates: { lat: number; lng: number };
+  route: Array<{ lat: number; lng: number }>;
 }
 
 interface TripPackageModalProps {
@@ -34,42 +34,44 @@ const TripPackageModal: React.FC<TripPackageModalProps> = ({
   const fuelConsumptionPer100km = Math.round((engineVolume * 4 + 2) * 10) / 10;
   const fuelPrice = FUEL_PRICES[fuelType];
 
-  // Generate 3 sample trip packages with placeholder data
+  // Generate 3 trip packages with real route coordinates
   const tripPackages: TripPackage[] = [
     {
       id: 'package-1',
-      routeName: 'Package 1',
-      distance: 25.5,
-      estimatedTime: '20 min',
-      fuelConsumption: (25.5 / 100) * fuelConsumptionPer100km,
-      fuelCost: ((25.5 / 100) * fuelConsumptionPer100km) * fuelPrice,
-      passengerPrice: Math.round(((25.5 / 100) * fuelConsumptionPer100km) * fuelPrice * 1.3),
-      startCoordinates: { lat: 51.0980240632225, lng: 71.40599948805387 },
-      endCoordinates: { lat: 51.1280240632225, lng: 71.43599948805387 }
+      routeName: 'Route Package 1',
+      route: PACKAGE_ROUTES['package-1'],
+      distance: calculateRouteDistance(PACKAGE_ROUTES['package-1']),
+      estimatedTime: '25 min',
+      get fuelConsumption() { return (this.distance / 100) * fuelConsumptionPer100km; },
+      get fuelCost() { return this.fuelConsumption * fuelPrice; },
+      get passengerPrice() { return Math.round(this.fuelCost * 1.3); }
     },
     {
       id: 'package-2',
-      routeName: 'Package 2',
-      distance: 18.2,
-      estimatedTime: '15 min',
-      fuelConsumption: (18.2 / 100) * fuelConsumptionPer100km,
-      fuelCost: ((18.2 / 100) * fuelConsumptionPer100km) * fuelPrice,
-      passengerPrice: Math.round(((18.2 / 100) * fuelConsumptionPer100km) * fuelPrice * 1.3),
-      startCoordinates: { lat: 51.0880240632225, lng: 71.39599948805387 },
-      endCoordinates: { lat: 51.1080240632225, lng: 71.41599948805387 }
+      routeName: 'Route Package 2',
+      route: PACKAGE_ROUTES['package-2'],
+      distance: calculateRouteDistance(PACKAGE_ROUTES['package-2']),
+      estimatedTime: '18 min',
+      get fuelConsumption() { return (this.distance / 100) * fuelConsumptionPer100km; },
+      get fuelCost() { return this.fuelConsumption * fuelPrice; },
+      get passengerPrice() { return Math.round(this.fuelCost * 1.3); }
     },
     {
       id: 'package-3',
-      routeName: 'Package 3',
-      distance: 32.8,
-      estimatedTime: '28 min',
-      fuelConsumption: (32.8 / 100) * fuelConsumptionPer100km,
-      fuelCost: ((32.8 / 100) * fuelConsumptionPer100km) * fuelPrice,
-      passengerPrice: Math.round(((32.8 / 100) * fuelConsumptionPer100km) * fuelPrice * 1.3),
-      startCoordinates: { lat: 51.1180240632225, lng: 71.42599948805387 },
-      endCoordinates: { lat: 51.1480240632225, lng: 71.45599948805387 }
+      routeName: 'Route Package 3',
+      route: PACKAGE_ROUTES['package-3'],
+      distance: calculateRouteDistance(PACKAGE_ROUTES['package-3']),
+      estimatedTime: '22 min',
+      get fuelConsumption() { return (this.distance / 100) * fuelConsumptionPer100km; },
+      get fuelCost() { return this.fuelConsumption * fuelPrice; },
+      get passengerPrice() { return Math.round(this.fuelCost * 1.3); }
     }
-  ];
+  ].map(pkg => ({
+    ...pkg,
+    fuelConsumption: (pkg.distance / 100) * fuelConsumptionPer100km,
+    fuelCost: ((pkg.distance / 100) * fuelConsumptionPer100km) * fuelPrice,
+    passengerPrice: Math.round(((pkg.distance / 100) * fuelConsumptionPer100km) * fuelPrice * 1.3)
+  }));
 
   const PackageCard: React.FC<{ package: TripPackage; index: number }> = ({ package: pkg, index }) => (
     <motion.div

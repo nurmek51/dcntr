@@ -136,35 +136,38 @@ export function getMockPredictionResponse(lat: number, lng: number): PredictionR
   return {
     predictions: [
       {
-        destination_area: "Торговый центр",
-        trip_count: 1,
-        percentage: 14.29,
-        coordinates: {
+        cluster_id: 10,
+        probability: 0.107,
+        cluster_center: {
           lat: lat + 0.01,
           lng: lng + 0.01
         }
       },
       {
-        destination_area: "Больница",
-        trip_count: 1,
-        percentage: 14.29,
-        coordinates: {
+        cluster_id: 4,
+        probability: 0.106,
+        cluster_center: {
           lat: lat - 0.01,
           lng: lng - 0.01
         }
       },
       {
-        destination_area: "Фитнес-центр",
-        trip_count: 1,
-        percentage: 14.29,
-        coordinates: {
+        cluster_id: 2,
+        probability: 0.083,
+        cluster_center: {
           lat: lat + 0.005,
           lng: lng + 0.015
         }
       }
     ],
-    total_nearby_clients: 3,
-    search_radius_km: 1,
-    query_location: { lat, lng }
+    model_info: {
+      model_type: "LogisticRegression",
+      top_1_accuracy: 0.112,
+      top_3_accuracy: 0.294,
+      n_clusters: 15
+    },
+    request_summary: {
+      start_point: { lat, lng }
+    }
   };
 }

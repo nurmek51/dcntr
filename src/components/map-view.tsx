@@ -4,6 +4,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import { checkHint, getMockHintResponse, type HintResponse } from '../services/hintApi';
+import { DEFAULT_MAP_CENTER } from '../utils/coordinates';
 
 // Fix for default markers in react-leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -26,29 +27,13 @@ interface TripPackage {
   fuelConsumption: number;
   fuelCost: number;
   passengerPrice: number;
-  startCoordinates: Coordinates;
-  endCoordinates: Coordinates;
-}
-
-interface PassengerOrder {
-  id: string;
-  pickupPoint: Coordinates;
-  destinationPoint: Coordinates;
-  passengerInfo: {
-    name: string;
-    rating: number;
-    phone: string;
-  };
-  estimatedPrice: number;
-  distance: number;
-  estimatedTime: string;
+  route: Array<{ lat: number; lng: number }>;
 }
 
 interface Prediction {
-  destination_area: string;
-  trip_count: number;
-  percentage: number;
-  coordinates: Coordinates;
+  cluster_id: number;
+  probability: number;
+  cluster_center: Coordinates;
 }
 
 interface HeatmapCluster {
@@ -64,7 +49,6 @@ interface MapViewProps {
   selectedPackage: TripPackage | null;
   predictions: Prediction[];
   heatmapClusters: HeatmapCluster[];
-  passengerOrders: PassengerOrder[];
 }
 
 // Custom marker icons
@@ -207,15 +191,13 @@ const MapView: React.FC<MapViewProps> = ({
   coordinates,
   selectedPackage,
   predictions,
-  heatmapClusters,
-  passengerOrders
+  heatmapClusters
 }) => {
   const [hintInfo, setHintInfo] = useState<{ hint: HintResponse; coordinates: Coordinates } | null>(null);
   const [isLoadingHint, setIsLoadingHint] = useState(false);
 
-  // Default center (Almaty, Kazakhstan)
-  const defaultCenter: Coordinates = { lat: 43.2220, lng: 76.8512 };
-  const mapCenter = coordinates || defaultCenter;
+  // Default center (Package 2, Point 2: 51°05'54.3"N 71°24'21.2"E)
+  const mapCenter = coordinates || DEFAULT_MAP_CENTER;
 
   const handleMapClick = async (clickedCoordinates: Coordinates) => {
     if (mode === 'heatmap') {
@@ -243,14 +225,21 @@ const MapView: React.FC<MapViewProps> = ({
     }
   };
 
-  const getHeatmapColor = (tripCount: number) => {
-    if (tripCount > 100) return '#ef4444'; // red-500
-    if (tripCount > 50) return '#eab308'; // yellow-500
-    return '#22c55e'; // green-500
+  const getHeatmapColor = (tripCount: number, maxTripCount: number) => {
+    const intensity = tripCount / maxTripCount;
+    
+    if (intensity >= 0.8) return '#dc2626'; // Red for top 20%
+    if (intensity >= 0.6) return '#ea580c'; // Orange for next 20%
+    if (intensity >= 0.4) return '#d97706'; // Amber for next 20%
+    if (intensity >= 0.2) return '#ca8a04'; // Yellow for next 20%
+    return '#65a30d'; // Lime for bottom 20%
   };
 
-  const getHeatmapRadius = (tripCount: number) => {
-    return Math.max(100, Math.min(500, tripCount * 2));
+  const getHeatmapRadius = (tripCount: number, maxTripCount: number) => {
+    const minRadius = 50;
+    const maxRadius = 200;
+    const intensity = tripCount / maxTripCount;
+    return minRadius + (maxRadius - minRadius) * intensity;
   };
 
   return (
@@ -287,44 +276,51 @@ const MapView: React.FC<MapViewProps> = ({
         {/* Selected package route */}
         {selectedPackage && (
           <>
-            <Marker
-              position={[selectedPackage.startCoordinates.lat, selectedPackage.startCoordinates.lng]}
-              icon={createCustomIcon('#22c55e', 'medium')}
-            >
-              <Popup>
-                <div>
-                  <strong>{selectedPackage.routeName} - Start</strong>
-                  <br />
-                  Distance: {selectedPackage.distance.toFixed(1)} km
-                  <br />
-                  Price: {selectedPackage.passengerPrice} ₸
-                </div>
-              </Popup>
-            </Marker>
+            {/* Route markers */}
+            {selectedPackage.route.map((point, index) => (
+              <Marker
+                key={`route-${selectedPackage.id}-${index}`}
+                position={[point.lat, point.lng]}
+                icon={createCustomIcon(
+                  index === 0 ? '#22c55e' : // Green for start
+                  index === selectedPackage.route.length - 1 ? '#ef4444' : // Red for end
+                  '#3b82f6', // Blue for intermediate points
+                  index === 0 || index === selectedPackage.route.length - 1 ? 'large' : 'small'
+                )}
+              >
+                <Popup>
+                  <div>
+                    <strong>
+                      {selectedPackage.routeName} - {
+                        index === 0 ? 'Start' :
+                        index === selectedPackage.route.length - 1 ? 'End' :
+                        `Point ${index + 1}`
+                      }
+                    </strong>
+                    <br />
+                    Coordinates: {point.lat.toFixed(6)}, {point.lng.toFixed(6)}
+                    {index === 0 && (
+                      <>
+                        <br />
+                        Total Distance: {selectedPackage.distance.toFixed(1)} km
+                        <br />
+                        Estimated Time: {selectedPackage.estimatedTime}
+                        <br />
+                        Passenger Price: {selectedPackage.passengerPrice} ₸
+                      </>
+                    )}
+                  </div>
+                </Popup>
+              </Marker>
+            ))}
             
-            <Marker
-              position={[selectedPackage.endCoordinates.lat, selectedPackage.endCoordinates.lng]}
-              icon={createCustomIcon('#ef4444', 'medium')}
-            >
-              <Popup>
-                <div>
-                  <strong>{selectedPackage.routeName} - End</strong>
-                  <br />
-                  Fuel Cost: {selectedPackage.fuelCost.toFixed(0)} ₸
-                  <br />
-                  Time: {selectedPackage.estimatedTime}
-                </div>
-              </Popup>
-            </Marker>
-            
+            {/* Route polyline */}
             <Polyline
-              positions={[
-                [selectedPackage.startCoordinates.lat, selectedPackage.startCoordinates.lng],
-                [selectedPackage.endCoordinates.lat, selectedPackage.endCoordinates.lng]
-              ]}
+              positions={selectedPackage.route.map(point => [point.lat, point.lng])}
               color="#3b82f6"
-              weight={4}
+              weight={5}
               opacity={0.8}
+              dashArray="10, 5"
             />
           </>
         )}
@@ -333,92 +329,49 @@ const MapView: React.FC<MapViewProps> = ({
         {mode === 'prediction' && predictions.map((prediction, index) => (
           <Marker
             key={`prediction-${index}`}
-            position={[prediction.coordinates.lat, prediction.coordinates.lng]}
+            position={[prediction.cluster_center.lat, prediction.cluster_center.lng]}
             icon={createCustomIcon('#8b5cf6', 'medium')}
           >
             <Popup>
               <div>
-                <strong>{prediction.destination_area}</strong>
+                <strong>Cluster #{prediction.cluster_id}</strong>
                 <br />
-                Trips: {prediction.trip_count}
+                Probability: {(prediction.probability * 100).toFixed(1)}%
                 <br />
-                Percentage: {prediction.percentage.toFixed(1)}%
+                Coordinates: {prediction.cluster_center.lat.toFixed(4)}, {prediction.cluster_center.lng.toFixed(4)}
               </div>
             </Popup>
           </Marker>
         ))}
 
-        {/* Passenger order markers */}
-        {passengerOrders.map((order) => (
-          <React.Fragment key={order.id}>
-            <Marker
-              position={[order.pickupPoint.lat, order.pickupPoint.lng]}
-              icon={createCustomIcon('#22c55e', 'small')}
-            >
-              <Popup>
-                <div>
-                  <strong>Pickup - {order.passengerInfo.name}</strong>
-                  <br />
-                  Price: {order.estimatedPrice} ₸
-                  <br />
-                  Rating: ★ {order.passengerInfo.rating.toFixed(1)}
-                </div>
-              </Popup>
-            </Marker>
-            
-            <Marker
-              position={[order.destinationPoint.lat, order.destinationPoint.lng]}
-              icon={createCustomIcon('#ef4444', 'small')}
-            >
-              <Popup>
-                <div>
-                  <strong>Destination</strong>
-                  <br />
-                  Distance: {order.distance.toFixed(1)} km
-                  <br />
-                  Time: {order.estimatedTime}
-                </div>
-              </Popup>
-            </Marker>
-            
-            <Polyline
-              positions={[
-                [order.pickupPoint.lat, order.pickupPoint.lng],
-                [order.destinationPoint.lat, order.destinationPoint.lng]
-              ]}
-              color="#f59e0b"
-              weight={3}
-              opacity={0.7}
-              dashArray="5, 10"
-            />
-          </React.Fragment>
-        ))}
-
         {/* Heatmap clusters */}
-        {mode === 'heatmap' && heatmapClusters.map((cluster) => (
-          <Circle
-            key={`heatmap-${cluster.cluster_id}`}
-            center={[cluster.start_center.lat, cluster.start_center.lng]}
-            radius={getHeatmapRadius(cluster.trip_count)}
-            fillColor={getHeatmapColor(cluster.trip_count)}
-            fillOpacity={0.3}
-            stroke={true}
-            color={getHeatmapColor(cluster.trip_count)}
-            weight={2}
-          >
-            <Popup>
-              <div>
-                <strong>Start Zone #{cluster.cluster_id}</strong>
-                <br />
-                Trip Count: {cluster.trip_count}
-                <br />
-                Avg Distance: {(cluster.avg_distance * 100).toFixed(2)} km
-                <br />
-                Click anywhere for detailed hint
-              </div>
-            </Popup>
-          </Circle>
-        ))}
+        {mode === 'heatmap' && heatmapClusters.length > 0 && (() => {
+          const maxTripCount = Math.max(...heatmapClusters.map(c => c.trip_count));
+          return heatmapClusters.map((cluster) => (
+            <Circle
+              key={`heatmap-${cluster.cluster_id}`}
+              center={[cluster.start_center.lat, cluster.start_center.lng]}
+              radius={getHeatmapRadius(cluster.trip_count, maxTripCount)}
+              fillColor={getHeatmapColor(cluster.trip_count, maxTripCount)}
+              fillOpacity={0.6}
+              stroke={true}
+              color={getHeatmapColor(cluster.trip_count, maxTripCount)}
+              weight={2}
+            >
+              <Popup>
+                <div>
+                  <strong>Start Zone #{cluster.cluster_id}</strong>
+                  <br />
+                  Trip Count: {cluster.trip_count.toLocaleString()}
+                  <br />
+                  Avg Distance: {cluster.avg_distance.toFixed(4)} km
+                  <br />
+                  <em className="text-sm text-gray-600">Click anywhere on map for location hints</em>
+                </div>
+              </Popup>
+            </Circle>
+          ));
+        })()}
       </MapContainer>
 
       {/* Loading indicator for hint */}
@@ -426,7 +379,7 @@ const MapView: React.FC<MapViewProps> = ({
         <div className="absolute top-4 right-4 bg-white rounded-[8px] shadow-lg p-3 z-[1000]">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 border-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
-            <span className="text-[14px] text-[#858898]">Loading hint...</span>
+            <span className="text-[14px] text-[#858898]">Analyzing location...</span>
           </div>
         </div>
       )}

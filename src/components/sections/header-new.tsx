@@ -24,12 +24,6 @@ const HeaderNew: React.FC = () => {
           >
             Try Map Demo
           </Link>
-          <Link 
-            to="/destination-prediction" 
-            className="bg-gray-200 text-black px-6 py-2 rounded-[8px] font-semibold text-[14px] hover:bg-gray-300 transition-colors"
-          >
-            Prediction Tool
-          </Link>
         </div>
 
         {/* Right: Nomadia + Decentrathon logos */}
