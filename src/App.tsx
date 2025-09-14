@@ -1,16 +1,19 @@
-import { Header } from './components/layout/header';
-import { HeroSection } from './components/sections/hero-section';
-import { TravelServices } from './components/sections/travel-services';
-import { CTASection } from './components/sections/cta-section';
+import HeaderNew from './components/sections/header-new';
+import HeroNew from './components/sections/hero-new';
+import TravelServicesNew from './components/sections/travel-services-new';
+import ChooseSection from './components/sections/cta-new';
 
 function App() {
   return (
-    <div className="min-h-screen bg-[#FFFEE9] w-full max-w-[1280px] mx-auto relative overflow-x-hidden">
-      <Header />
-      <HeroSection />
-      <TravelServices />
-      <CTASection />
-    </div>
+    <>
+      <HeaderNew />
+      <div className="flex flex-col items-center justify-center gap-[100px]">
+        
+        <HeroNew />
+        <TravelServicesNew />
+        <ChooseSection />
+      </div>
+    </>
   );
 }
 
