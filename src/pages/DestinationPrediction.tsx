@@ -89,11 +89,11 @@ const DestinationPrediction: React.FC<DestinationPredictionProps> = () => {
 
       predictionsToShow.forEach((prediction) => {
         markers.push({
-          id: `prediction-${prediction.cluster_id}`,
-          position: prediction.cluster_center,
+          id: `prediction-${prediction.destination_area}`,
+          position: prediction.coordinates,
           type: 'prediction',
           data: prediction,
-          probability: prediction.probability,
+          probability: prediction.percentage / 100,
         });
       });
     }
@@ -103,7 +103,7 @@ const DestinationPrediction: React.FC<DestinationPredictionProps> = () => {
       clusters.clusters.forEach((cluster) => {
         // Don't add cluster marker if there's already a prediction marker for this cluster
         const hasPrediction = predictions?.predictions.some(
-          p => p.cluster_id === cluster.cluster_id
+          p => p.destination_area === `cluster-${cluster.cluster_id}`
         );
         
         if (!hasPrediction) {

@@ -20,9 +20,9 @@ const HeaderNew: React.FC = () => {
         <div className="flex items-center gap-6">
           <Link 
             to="/map" 
-            className="bg-black text-white px-6 py-2 rounded-[8px] font-semibold text-[14px] hover:bg-gray-800 transition-colors shadow-[2px_3px_3px_rgba(0,0,0,0.2)]"
+            className="bg-[#94EA0D] hover:bg-[#7BC108] transition-all duration-300 px-12 py-6 rounded-[20px] shadow-2xl border-4 border-white hover:border-[#94EA0D] transform hover:scale-105 active:scale-95"
           >
-            Try Map Demo
+            <span className="font-poppins font-bold text-[28px] text-black tracking-wide">Try Map Demo</span>
           </Link>
         </div>
 

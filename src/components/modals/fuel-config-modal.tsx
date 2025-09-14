@@ -43,7 +43,20 @@ const FuelConfigModal: React.FC<FuelConfigModalProps> = ({ isOpen, onClose }) =>
             transition={{ type: "spring", duration: 0.5, bounce: 0.3 }}
             className="fixed inset-0 flex items-center justify-center z-50 p-4"
           >
-            <div className="bg-[#FFFEE9] rounded-[20px] shadow-[3px_4px_4px_rgba(0,0,0,0.4)] w-full max-w-[500px] p-8 mx-4">
+            <div className="relative bg-gradient-to-br from-[#FFFEE9] via-white to-[#F0F9FF] rounded-[24px] shadow-2xl border-4 border-white/50 backdrop-blur-sm w-full max-w-[520px] p-8 mx-4 overflow-hidden">
+              {/* Animated background elements */}
+              <motion.div
+                animate={{ rotate: 360, scale: [1, 1.2, 1] }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-r from-blue-200/30 to-purple-200/30 rounded-full blur-xl"
+              />
+              <motion.div
+                animate={{ rotate: -360, scale: [1.2, 1, 1.2] }}
+                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                className="absolute -bottom-10 -left-10 w-40 h-40 bg-gradient-to-r from-green-200/30 to-yellow-200/30 rounded-full blur-xl"
+              />
+              
+              <div className="relative z-10">
               {/* Car Illustration */}
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
@@ -66,7 +79,7 @@ const FuelConfigModal: React.FC<FuelConfigModalProps> = ({ isOpen, onClose }) =>
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="font-bold text-[28px] text-black text-center mb-2"
+                className="font-['Press_Start_2P',_monospace] text-[28px] text-black text-center mb-2"
               >
                 Configure Your Vehicle
               </motion.h2>
@@ -75,7 +88,7 @@ const FuelConfigModal: React.FC<FuelConfigModalProps> = ({ isOpen, onClose }) =>
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="font-medium text-[#858898] text-[16px] text-center mb-8"
+                className="font-poppins font-medium text-[#858898] text-[16px] text-center mb-8"
               >
                 Set up your car's engine and fuel preferences
               </motion.p>
@@ -87,7 +100,7 @@ const FuelConfigModal: React.FC<FuelConfigModalProps> = ({ isOpen, onClose }) =>
                 transition={{ delay: 0.5 }}
                 className="mb-8"
               >
-                <label className="block font-semibold text-[18px] text-black mb-4">
+                <label className="block font-poppins font-semibold text-[18px] text-black mb-4">
                   Engine Volume: {engineVolume.toFixed(1)}L
                 </label>
                 <div className="relative">
@@ -98,9 +111,12 @@ const FuelConfigModal: React.FC<FuelConfigModalProps> = ({ isOpen, onClose }) =>
                     step="0.1"
                     value={engineVolume}
                     onChange={(e) => setEngineVolume(parseFloat(e.target.value))}
-                    className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                    className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider shadow-inner"
+                    style={{
+                      background: `linear-gradient(to right, #94EA0D 0%, #94EA0D ${((engineVolume - 1.2) / (4.5 - 1.2)) * 100}%, #e5e7eb ${((engineVolume - 1.2) / (4.5 - 1.2)) * 100}%, #e5e7eb 100%)`
+                    }}
                   />
-                  <div className="flex justify-between text-sm text-[#858898] mt-2">
+                  <div className="flex justify-between font-poppins text-sm text-[#858898] mt-2">
                     <span>1.2L</span>
                     <span>4.5L</span>
                   </div>
@@ -114,26 +130,30 @@ const FuelConfigModal: React.FC<FuelConfigModalProps> = ({ isOpen, onClose }) =>
                 transition={{ delay: 0.6 }}
                 className="mb-8"
               >
-                <label className="block font-semibold text-[18px] text-black mb-4">
-                  Fuel Type & Current Tariff
+                <label className="block font-poppins font-semibold text-[18px] text-black mb-4">
+                  Fuel Type
                 </label>
-                <div className="relative">
-                  <select
-                    value={selectedFuelType}
-                    onChange={(e) => setSelectedFuelType(e.target.value as keyof typeof FUEL_PRICES)}
-                    className="w-full px-4 py-4 bg-white border-2 border-gray-200 rounded-[12px] font-medium text-[16px] text-black appearance-none cursor-pointer focus:outline-none focus:border-blue-500 transition-colors shadow-sm"
-                  >
-                    {fuelTypeOptions.map((option) => (
-                      <option key={option.key} value={option.key}>
-                        {option.label} - {option.price} ₸/L
-                      </option>
-                    ))}
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4">
-                    <svg className="fill-current h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                      <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-                    </svg>
-                  </div>
+                <div className="grid grid-cols-1 gap-3">
+                  {fuelTypeOptions.map((option) => (
+                    <div
+                      key={option.key}
+                      onClick={() => setSelectedFuelType(option.key)}
+                      className={`flex-1 p-4 rounded-[12px] border-2 transition-all cursor-pointer transform hover:scale-105 ${
+                        selectedFuelType === option.key
+                          ? 'border-[#94EA0D] bg-white shadow-xl border-4'
+                          : 'border-gray-200 bg-white hover:border-gray-300 shadow-lg'
+                      }`}
+                    >
+                      <div className="text-center">
+                        <div className="font-poppins font-semibold text-[16px] text-black mb-1">
+                          {option.label}
+                        </div>
+                        <div className="font-poppins text-[14px] text-[#858898]">
+                          {option.price} ₸/L
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </motion.div>
 
@@ -147,13 +167,13 @@ const FuelConfigModal: React.FC<FuelConfigModalProps> = ({ isOpen, onClose }) =>
                   onClick={handleSubmit}
                   variant="primary"
                   size="lg"
-                  className="w-full"
+                  className="w-full bg-[#94EA0D] hover:bg-[#7BC108] text-black py-4 text-[16px] font-poppins font-bold rounded-[12px] shadow-2xl border-4 border-white hover:border-[#94EA0D] transition-all transform hover:scale-105 active:scale-95"
                 >
                   Continue
                 </Button>
               </motion.div>
 
-              {/* Custom Slider Styles */}
+              {/* Slider Styles */}
               <style>{`
                 .slider::-webkit-slider-thumb {
                   appearance: none;
@@ -188,6 +208,7 @@ const FuelConfigModal: React.FC<FuelConfigModalProps> = ({ isOpen, onClose }) =>
                   border: none;
                 }
               `}</style>
+              </div>
             </div>
           </motion.div>
         </>

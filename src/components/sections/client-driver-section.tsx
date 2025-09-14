@@ -11,7 +11,7 @@ export function ClientDriverSection() {
   const navigate = useNavigate();
 
   const handleTryItNow = () => {
-    navigate('/destination-prediction');
+    navigate('/map');
   };
 
   return (
